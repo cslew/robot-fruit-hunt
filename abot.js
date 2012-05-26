@@ -5,7 +5,7 @@ var SOUTH_WEST = 333;
 var SOUTH_EAST = 444;
 
 //check if grid is beyond boundaries of the board
-var is_at_edge = function(pos) {
+function is_at_edge(pos) {
   var board = get_board();
 
   if (pos.x > (board.length-1) || pos.x < 1 ||
@@ -17,7 +17,7 @@ var is_at_edge = function(pos) {
 };
 
 //return the fruit type has the highest number
-var count_of_each_type = function() {
+function count_of_each_type() {
   var no_of_types = get_number_of_item_types();
   var fruit_type_with_max_count = -1;
   var curr_type_max_count = -1;
@@ -35,7 +35,7 @@ var count_of_each_type = function() {
 };
 
 //return grids by radius
-var get_grids_by_radius = function(x, y, rad) {
+function get_grids_by_radius(x, y, rad) {
   var top_left = {x: -(rad), y: rad}; //top left
   var sq_len = 3 + (2*(rad-1));
 
@@ -61,6 +61,7 @@ var get_grids_by_radius = function(x, y, rad) {
 
   return grids;
 };
+
 
 function new_game() {
 }
@@ -94,6 +95,12 @@ function make_move() {
         return curr_grid.direction;
     }
   }
+
+ for (var i=1; i<=10; i++) {
+   var has_found_fruit = false;
+
+
+ }
 
   //when none of NSEW grids has fruits. HAHA!
   var rand = Math.random() * 4;

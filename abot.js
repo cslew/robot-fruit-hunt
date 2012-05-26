@@ -34,6 +34,34 @@ var count_of_each_type = function() {
   return fruit_type_to_collect;
 };
 
+//return grids by radius
+var get_grids_by_radius = function(x, y, rad) {
+  var top_left = {x: -(rad), y: rad}; //top left
+  var sq_len = 3 + (2*(rad-1));
+
+  //top
+  for (var i=1; i<=sq_len; i++) {
+    grids.push({x: x-(rad)+(i-1), y: y+rad});
+  }
+
+  //bottom
+  for (var i=1; i<=sq_len; i++) {
+    grids.push({x: x-(rad)+(i-1), y: y-(rad)});
+  }
+
+  //left
+  for (var i=2; i<=sq_len-1; i++) {
+    grids.push({x: x-(rad), y: y+rad-(i-1)});
+  }
+
+  //right
+  for (var i=2; i<=sq_len-1; i++) {
+    grids.push({x: x+rad, y: y+rad-(i-1)});
+  }
+
+  return grids;
+};
+
 function new_game() {
 }
 

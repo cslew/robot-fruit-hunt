@@ -62,6 +62,30 @@ function get_grids_by_radius(x, y, rad) {
   return grids;
 };
 
+function direction_to_target(x, y, target_x, target_y) {
+  //check if if going just N S E W, straight routes, not diagonal
+  var is_straight_ = false;
+
+  if (target_x == x && target_y > y) {
+    return NORTH;
+  } else if (target_x == x && target_y < y) {
+    return SOUTH;
+  } else if (target_x > x && target_y == y) {
+    return EAST;
+  } else if (target_x < x && target_y == y) {
+    return WEST;
+  } else if (target_x < x && target_y > y) {
+    return NORTH_WEST;
+  } else if (target_x > x && target_y > y) {
+    return NORTH_EAST;
+  } else if (target_x > x && target_y < y) {
+    return SOUTH_EAST;
+  } else if (target_x < x && target_y < y) {
+    return SOUTH_WEST;
+  }
+
+  return EAST; //default
+}
 
 function new_game() {
 }

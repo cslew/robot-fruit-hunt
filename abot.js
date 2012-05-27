@@ -8,11 +8,10 @@ var SOUTH_EAST = 444;
 function is_at_edge(pos) {
   var board = get_board();
 
-  if (pos.x > (board.length-1) || pos.x < 1 ||
-    pos.y > (board[0].length-1) || pos.y < 1) {
+  if (pos.x > (board.length-1) || pos.x < 0 ||
+    pos.y > (board[0].length-1) || pos.y < 0) {
     return true;
   }
-
   return false;
 };
 
@@ -36,55 +35,61 @@ function count_of_each_type() {
 
 //return grids by radius
 function get_grids_by_radius(x, y, rad) {
-  var top_left = {x: -(rad), y: rad}; //top left
+  var top_left = {x: x-rad, y: y-rad}; //top left
   var sq_len = 3 + (2*(rad-1));
+  var grids = [];
 
   //top
   for (var i=1; i<=sq_len; i++) {
-    grids.push({x: x-(rad)+(i-1), y: y+rad});
+    grids.push({x: (x-rad)+(i-1), y: y-rad});
   }
 
   //bottom
   for (var i=1; i<=sq_len; i++) {
-    grids.push({x: x-(rad)+(i-1), y: y-(rad)});
+    grids.push({x: (x-rad)+(i-1), y: y+1});
   }
 
   //left
   for (var i=2; i<=sq_len-1; i++) {
-    grids.push({x: x-(rad), y: y+rad-(i-1)});
+    grids.push({x: x-rad, y: y-rad+(i-1)});
   }
 
   //right
   for (var i=2; i<=sq_len-1; i++) {
-    grids.push({x: x+rad, y: y+rad-(i-1)});
+    grids.push({x: x+rad, y: y-rad+(i-1)});
   }
 
   return grids;
 };
 
 function direction_to_target(x, y, target_x, target_y) {
-  //check if if going just N S E W, straight routes, not diagonal
-  var is_straight_ = false;
-
   if (target_x == x && target_y > y) {
-    return NORTH;
-  } else if (target_x == x && target_y < y) {
     return SOUTH;
+  } else if (target_x == x && target_y < y) {
+    return NORTH;
   } else if (target_x > x && target_y == y) {
     return EAST;
   } else if (target_x < x && target_y == y) {
     return WEST;
   } else if (target_x < x && target_y > y) {
-    return NORTH_WEST;
+    if (get_random_boolean()) { return SOUTH } else { return WEST };
   } else if (target_x > x && target_y > y) {
-    return NORTH_EAST;
+    if (get_random_boolean()) { return SOUTH } else { return EAST };
   } else if (target_x > x && target_y < y) {
-    return SOUTH_EAST;
+    if (get_random_boolean()) { return NORTH } else { return EAST };
   } else if (target_x < x && target_y < y) {
-    return SOUTH_WEST;
+    if (get_random_boolean()) { return NORTH } else { return WEST };
   }
-
+  
   return EAST; //default
+}
+
+function get_random_boolean() {
+  var r = Math.floor((Math.random()*2)+1);
+  if (r == 1) {
+    return false;
+  }
+  return true;
 }
 
 function new_game() {
@@ -98,40 +103,29 @@ function make_move() {
     return TAKE;
   }
 
+  var direction_to_move = PASS; //by default
 
-  //check if surround grids has any fruits
-  for (var i=0; i<surround_grids.length; i++) {
-    var curr_grid = surround_grids[i];
+  //search the radius(es)
+  for (var rad=1; rad<=20; rad++) {
+    var has_found_fruit = false;
+    grids = get_grids_by_radius(get_my_x(), get_my_y(), rad);
 
-    //if this particular grid a fruit, go to it
-    if (!is_at_edge(curr_grid) && has_item(board[curr_grid.x][curr_grid.y])) {
-        return curr_grid.direction;
+    for (var j=0; j<grids.length; j++) {
+      var g = grids[j];
+
+      if (!is_at_edge(g) && has_item(get_board()[g.x][g.y])) {
+        direction_to_move = direction_to_target(get_my_x(), get_my_y(), g.x, g.y);
+        has_found_fruit = true;
+        break;
+      }
+    }
+
+    if (has_found_fruit) {
+      break;
     }
   }
 
- for (var i=1; i<=10; i++) {
-   var has_found_fruit = false;
+  trace("direction_to_move: " + direction_to_move);
 
-
- }
-
-  //when none of NSEW grids has fruits. HAHA!
-  var rand = Math.random() * 4;
-  if (rand < 1) return NORTH;
-  if (rand < 2) return SOUTH;
-  if (rand < 3) return EAST;
-  if (rand < 4) return WEST;
-
-  return PASS;
+  return direction_to_move;
 }
-
-
-//loops through entire board
-//for(var x=0; x<board.length; x++) {
-//  var curr_col = board[i];
-//
-//  for(var y=0; y<curr_col.length; y++) {
-//    //board[i][y]
-//  }
-//}
-//look for specific type of fruit

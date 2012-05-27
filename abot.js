@@ -98,17 +98,6 @@ function make_move() {
     return TAKE;
   }
 
-  //check NSEW grids relative to current position
-  var surround_grids = [];
-  surround_grids.push({ x: get_my_x(), y: get_my_y()+1, direction: NORTH });
-  surround_grids.push({ x: get_my_x(), y: get_my_y()-1, direction: SOUTH });
-  surround_grids.push({ x: get_my_x()+1, y: get_my_y(), direction: EAST });
-  surround_grids.push({ x: get_my_x()-1, y: get_my_y(), direction: WEST });
-  surround_grids.push({ x: get_my_x()-1, y: get_my_y(), direction: WEST });
-  surround_grids.push({ x: get_my_x()-1, y: get_my_y()+1, direction: NORTH }); //NORTH_WEST
-  surround_grids.push({ x: get_my_x()+1, y: get_my_y()+1, direction: NORTH }); //NORTH_EAST
-  surround_grids.push({ x: get_my_x()-1, y: get_my_y()-1, direction: SOUTH }); //SOUTH_WEST
-  surround_grids.push({ x: get_my_x()+1, y: get_my_y()-1, direction: SOUTH }); //SOUTH_EAST
 
   //check if surround grids has any fruits
   for (var i=0; i<surround_grids.length; i++) {

@@ -1,8 +1,12 @@
-//declare new variables
+//constants
 var NORTH_WEST = 111;
 var NORTH_EAST = 222;
 var SOUTH_WEST = 333;
 var SOUTH_EAST = 444;
+
+//variables
+var prev_pos = null;
+var target_grid = null;
 
 //check if grid is beyond boundaries of the board
 function is_at_edge(pos) {
@@ -80,7 +84,7 @@ function direction_to_target(x, y, target_x, target_y) {
   } else if (target_x < x && target_y < y) {
     if (get_random_boolean()) { return NORTH } else { return WEST };
   }
-  
+
   return EAST; //default
 }
 
@@ -98,34 +102,62 @@ function new_game() {
 function make_move() {
   var board = get_board();
 
+  //check if prev pos and curr pos is the same
+  if (prev_pos != null) {
+    if (prev_pos.x == get_my_x() && prev_pos.y == get_my_y()) {
+      console.log("did not move");
+    }
+  }
+
+  //store current position
+  prev_pos = {x: get_my_x(), y: get_my_y()};
+
   // we found an item! take it!
   if (board[get_my_x()][get_my_y()] > 0) {
+    if (target_grid.x == get_my_x() && target_grid.y == get_my_y()) {
+      target_grid = null;
+    }
+
     return TAKE;
   }
 
   var direction_to_move = PASS; //by default
 
-  //search the radius(es)
-  for (var rad=1; rad<=20; rad++) {
-    var has_found_fruit = false;
-    grids = get_grids_by_radius(get_my_x(), get_my_y(), rad);
+  if (target_grid != null) {
+    //if we have a target to move to
+    direction_to_move = direction_to_target(get_my_x(), get_my_y(),
+      target_grid.x, target_grid.y);
 
-    for (var j=0; j<grids.length; j++) {
-      var g = grids[j];
+    trace("has target");
+  } else {
+    //if we don't have a target to move to
 
-      if (!is_at_edge(g) && has_item(get_board()[g.x][g.y])) {
-        direction_to_move = direction_to_target(get_my_x(), get_my_y(), g.x, g.y);
-        has_found_fruit = true;
+    //search the radius(es)
+    for (var rad = 1; rad <= 20; rad++) {
+      var has_found_fruit = false;
+      grids = get_grids_by_radius(get_my_x(), get_my_y(), rad);
+
+      for (var j = 0; j < grids.length; j++) {
+        var g = grids[j];
+
+        if (!is_at_edge(g) && has_item(get_board()[g.x][g.y])) {
+          direction_to_move = direction_to_target(get_my_x(), get_my_y(), g.x, g.y);
+          has_found_fruit = true;
+          target_grid = {x: g.x, y: g.y};
+          break;
+        }
+      }
+
+      if (has_found_fruit) {
         break;
       }
     }
 
-    if (has_found_fruit) {
-      break;
-    }
+    trace("no target, found target at: " + target_grid.x + "," + target_grid.y);
   }
 
   trace("direction_to_move: " + direction_to_move);
+  trace("----------------------------------");
 
   return direction_to_move;
 }
